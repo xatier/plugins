@@ -5,6 +5,7 @@
 #include <memory>
 #include "albert/frontend.h"
 
+
 namespace QmlBoxModel {
 
 class MainWindow;

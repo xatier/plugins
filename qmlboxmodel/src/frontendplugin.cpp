@@ -3,6 +3,8 @@
 #include "frontendplugin.h"
 #include "configwidget.h"
 #include "mainwindow.h"
+#include <QLoggingCategory>
+Q_LOGGING_CATEGORY(qlc_qbm, "qmlboxmodel")
 
 
 /** ***************************************************************************/

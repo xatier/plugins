@@ -3,17 +3,18 @@
 #include <QApplication>
 #include <QCursor>
 #include <QDebug>
-#include <QDirIterator>
 #include <QDesktopWidget>
 #include <QDir>
+#include <QDirIterator>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QSettings>
-#include <QStandardPaths>
-#include <QTimer>
+#include <QLoggingCategory>
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QQuickItem>
+#include <QSettings>
+#include <QStandardPaths>
+#include <QTimer>
 #include "mainwindow.h"
 #include "frontendplugin.h"
 #ifdef __unix__
@@ -127,6 +128,17 @@ QmlBoxModel::MainWindow::MainWindow(FrontendPlugin *plugin, QWindow *parent) : Q
     QStringList pluginDataPaths = QStandardPaths::locateAll(QStandardPaths::AppDataLocation,
                                                             plugin->id(),
                                                             QStandardPaths::LocateDirectory);
+    if (pluginDataPaths.empty()){
+        qCCritical(qlc_qbm) << "None of the following plugin dirs exists:";
+        for (const QString &pluginPath : QStandardPaths::standardLocations(QStandardPaths::AppDataLocation))
+            qCCritical(qlc_qbm).noquote() << QString("%1/%2").arg(pluginPath, plugin->id());
+        qFatal("Irrecoverable error occured.");
+    }
+
+
+
+
+
 
 //    // Add the shared modules to the lookup path
 //    for (const QString &pluginDataPath : pluginDataPaths){
@@ -138,7 +150,12 @@ QmlBoxModel::MainWindow::MainWindow(FrontendPlugin *plugin, QWindow *parent) : Q
     // Get style files
     QFileInfoList styles;
     for (const QString &pluginDataPath : pluginDataPaths) {
-        QDirIterator it(QString("%1/styles").arg(pluginDataPath), QDir::Dirs|QDir::NoDotAndDotDot);
+        QString path = QString("%1/styles").arg(pluginDataPath);
+
+        QDirIterator it(path, QDir::Dirs|QDir::NoDotAndDotDot);
+
+        qCDebug(qlc_qbm) << "Looking for styles in" << path;
+
         while ( it.hasNext() ) {
             QDir root = QDir(it.next());
             if ( root.exists(STYLE_MAIN_NAME) ){
@@ -165,8 +182,7 @@ QmlBoxModel::MainWindow::MainWindow(FrontendPlugin *plugin, QWindow *parent) : Q
     }
 
     if (styles_.empty())
-        throw "No styles found.";
-
+        qCCritical(qlc_qbm) << "No styles found.";
 
     auto storeWinPos = [this](){
         plugin_->settings().setValue(CFG_WND_POS, position());

@@ -7,6 +7,8 @@
 #include <QFileSystemWatcher>
 #include <QIdentityProxyModel>
 #include "albert/util/history.h"
+#include <QLoggingCategory>
+Q_DECLARE_LOGGING_CATEGORY(qlc_qbm)
 
 namespace QmlBoxModel {
 
