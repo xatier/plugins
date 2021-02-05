@@ -37,6 +37,8 @@ const char *CONFIG_LOCATIONS[] = {
     "BraveSoftware",
     "brave-browser",
     "chromium",
+    "microsoft-edge",
+    "microsoft-edge-dev",
     "google-chrome"
 };
 }
